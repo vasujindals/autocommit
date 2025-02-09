@@ -1,0 +1,37 @@
+# Name of our workflow (will appear in the Actions tab)
+name: Daily Repository Update
+
+# When to run the workflow
+on:
+  schedule:
+    # This will run at 10:00 AM UTC every day
+    - cron: '0 10 * * *'
+  # Also allow manual triggers through GitHub interface
+  workflow_dispatch:
+
+# List of jobs to run
+jobs:
+  create-daily-commit:
+    # Use Ubuntu as our operating system
+    runs-on: ubuntu-latest
+    
+    # Steps in our job
+    steps:
+      # Step 1: Get a copy of our repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Create a simple update (includes your email as required)
+      - name: Create daily update with 22f3002134@ds.study.iitm.ac.in
+        run: |
+          # Get current date
+          echo "Daily update $(date)" > update.txt
+          
+      # Step 3: Commit and push the changes
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add update.txt
+          git commit -m "Daily automated update"
+          git push
